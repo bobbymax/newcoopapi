@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Role extends Model
 {
     use HasFactory;
+
+    protected $guarded = [''];
+
+    protected $with = ['members'];
+
+    public function members(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(User::class, 'roleable');
+    }
 }
