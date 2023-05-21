@@ -17,4 +17,9 @@ class Organization extends Model
     {
         return $this->morphMany(Account::class, 'accountable');
     }
+
+    public function beneficiaries(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Expenditure::class, 'expenditureable');
+    }
 }

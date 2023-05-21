@@ -11,16 +11,21 @@ class Expenditure extends Model
 
     protected $guarded = [''];
 
-    protected $with = ['controller', 'expenditurable', 'subBudgetHead'];
+    protected $with = ['controller', 'subBudgetHead'];
 
     public function controller(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function expenditurable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function member(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(User::class, 'member_id');
+    }
+
+    public function fund()
+    {
+        return $this->subBudgetHead->fund;
     }
 
     public function subBudgetHead(): \Illuminate\Database\Eloquent\Relations\BelongsTo

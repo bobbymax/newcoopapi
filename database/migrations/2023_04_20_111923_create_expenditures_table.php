@@ -29,7 +29,7 @@ return new class extends Migration
             $table->enum('payment_type', ['staff', 'member', 'third-party', 'other'])->default('member');
             $table->bigInteger('expenditureable_id')->unsigned();
             $table->string('expenditureable_type');
-            $table->enum('status', ['pending', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'cleared', 'batched', 'reversed', 'deposit', 'paid'])->default('pending');
             $table->timestamps();
         });
     }

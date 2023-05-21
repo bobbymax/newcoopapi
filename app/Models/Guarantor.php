@@ -11,7 +11,7 @@ class Guarantor extends Model
 
     protected $guarded = [''];
 
-    protected $with = ['member'];
+//    protected $with = ['member'];
 
     public function member(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

@@ -11,7 +11,7 @@ class ChartOfAccount extends Model
 
     protected $guarded = [''];
 
-    protected $with = ['accountCode'];
+//    protected $with = ['accountCode'];
 
     public function accountCode(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

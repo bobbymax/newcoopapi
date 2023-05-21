@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('noOfPayments')->default(0);
             $table->decimal('total_amount', $precision=30, $scale=2)->default(0);
+            $table->enum('status', ['pending', 'paid'])->default('pending');
             $table->boolean('closed')->default(false);
             $table->timestamps();
         });

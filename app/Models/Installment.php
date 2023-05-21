@@ -11,8 +11,6 @@ class Installment extends Model
 
     protected $guarded = [''];
 
-    protected $with = ['loan'];
-
     public function loan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Loan::class, 'loan_id');

@@ -11,7 +11,7 @@ class BudgetHead extends Model
 
     protected $guarded = [''];
 
-    protected $with = ['subBudgetHeads'];
+    protected $with = ["subBudgetHeads"];
 
     public function subBudgetHeads(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

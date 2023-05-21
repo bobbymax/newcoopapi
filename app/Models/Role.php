@@ -11,10 +11,15 @@ class Role extends Model
 
     protected $guarded = [''];
 
-    protected $with = ['members'];
+//    protected $with = ['members'];
 
     public function members(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {
         return $this->morphedByMany(User::class, 'roleable');
+    }
+
+    public function modules(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(Module::class, 'roleable');
     }
 }

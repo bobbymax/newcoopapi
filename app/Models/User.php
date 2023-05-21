@@ -6,7 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+//use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -18,7 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $guarded = [''];
-    protected $with = ['roles', 'loans', 'serviceRequests', 'accounts', 'batches', 'contributions', 'contribution', 'deposits'];
+    protected $with = ['roles', 'wallet'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -42,6 +43,11 @@ class User extends Authenticatable
     public function loans(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Loan::class);
+    }
+
+    public function wallet(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Wallet::class);
     }
 
     public function serviceRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -77,5 +83,15 @@ class User extends Authenticatable
     public function contribution(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Contribution::class)->where('status', 'active');
+    }
+
+    public function expenditures(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Expenditure::class);
+    }
+
+    public function beneficiaries(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Expenditure::class, 'expenditureable');
     }
 }

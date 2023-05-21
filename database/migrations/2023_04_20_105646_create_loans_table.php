@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('commitment', $precision=30, $scale=2)->default(0);
             $table->decimal('interestSum', $precision=30, $scale=2)->default(0);
             $table->decimal('totalPayable', $precision=30, $scale=2)->default(0);
-            $table->enum('status', ['registered', 'approved', 'denied'])->default('registered');
+            $table->enum('status', ['pending', 'registered', 'approved', 'denied'])->default('pending');
             $table->boolean('paid')->default(false);
             $table->timestamps();
         });
