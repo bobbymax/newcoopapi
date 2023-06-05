@@ -26,11 +26,13 @@ class UserResource extends JsonResource
             'mobile' => $this->mobile,
             'type' => $this->type,
             'staff_no' => $this->staff_no,
-            'verified' => $this->verfied == 1,
+            'verified' => $this->verified == 1 ? "Verified" : "Not Verified",
+            'disabled' => $this->disabled == 1,
             'attributes' => [
                 'roles' => $this->roles->pluck('label')->toArray(),
                 'wallet' => $this->wallet,
-                'loans' => $this->loans
+                'loans' => LoanResource::collection($this->loans),
+                'accounts' => $this->accounts
             ]
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DepositResource;
 use App\Models\Deposit;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
@@ -25,6 +26,11 @@ class DepositController extends Controller
         return $this->success(Deposit::where('user_id', Auth::user()->id)->latest()->get());
     }
 
+    public function fetchAll(): \Illuminate\Http\JsonResponse
+    {
+        return $this->success(DepositResource::collection(Deposit::latest()->get()));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -41,6 +47,10 @@ class DepositController extends Controller
         }
 
         $deposit = Deposit::create($request->all());
+
+        $deposit->member->wallet->uncleared = $request->amount;
+        $deposit->member->wallet->save();
+
         return $this->success($deposit, 'Deposit created waiting verification', 201);
     }
 
@@ -70,11 +80,12 @@ class DepositController extends Controller
 
         if ($deposit->status === "verified") {
             $deposit->member->wallet->savings += $deposit->amount;
-            $deposit->member->wallet->uncleared -= $deposit->amount;
-            $deposit->member->wallet->save();
         }
 
-        return $this->success($deposit, 'Deposit updated successfully!');
+        $deposit->member->wallet->uncleared -= $deposit->amount;
+        $deposit->member->wallet->save();
+
+        return $this->success(new DepositResource($deposit), 'Deposit updated successfully!');
     }
 
     /**
@@ -83,8 +94,11 @@ class DepositController extends Controller
     public function destroy(Deposit $deposit): \Illuminate\Http\JsonResponse
     {
         if ($deposit->status !== "pending") {
-            return $this->error(null, 'This transaction has already been acted upon', 403);
+            return $this->error(null, 'You cannot delete this transaction!!', 403);
         }
+
+        $deposit->member->wallet->uncleared -= $deposit->amount;
+        $deposit->member->wallet->save();
 
         $deposit->delete();
         return $this->success(null, 'Deposit deleted successfully!');

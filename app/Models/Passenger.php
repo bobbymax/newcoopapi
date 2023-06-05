@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class Passenger extends Model
 {
     use HasFactory;
 
     protected $guarded = [''];
 
-    public function accountable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function airTicket(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(AirTicket::class, 'air_ticket_id');
     }
 }

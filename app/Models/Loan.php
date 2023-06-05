@@ -32,4 +32,9 @@ class Loan extends Model
     {
         return $this->hasMany(Guarantor::class);
     }
+
+    public function liquidations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Liquidation::class);
+    }
 }

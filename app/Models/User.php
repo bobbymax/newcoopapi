@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $guarded = [''];
-    protected $with = ['roles', 'wallet'];
+    protected $with = ['roles', 'wallet', 'accounts'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -60,6 +60,11 @@ class User extends Authenticatable
         return $this->morphMany(Account::class, 'accountable');
     }
 
+    public function account(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(Account::class, 'accountable')->where('current', true);
+    }
+
     public function roles(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {
         return $this->morphToMany(Role::class, 'roleable');
@@ -90,8 +95,28 @@ class User extends Authenticatable
         return $this->hasMany(Expenditure::class);
     }
 
-    public function beneficiaries(): \Illuminate\Database\Eloquent\Relations\MorphMany
+     public function payments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+     {
+         return $this->morphMany(Expenditure::class, 'expenditureable');
+     }
+
+    public function projects(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->morphMany(Expenditure::class, 'expenditureable');
+        return $this->hasMany(Project::class);
+    }
+
+    public function awards(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Award::class);
+    }
+
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Transaction::class, 'transactionable');
+    }
+
+    public function liquidations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Liquidation::class);
     }
 }

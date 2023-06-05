@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -35,6 +36,8 @@ class AuthController extends Controller
             return $this->error($validator->errors(), 'Please fix this errors', 500);
         }
 
+        $password = Str::slug($request->firstname) . "." . Str::slug($request->surname);
+
         $user = User::create([
             'membership_no' => $request->membership_no,
             'staff_no' => $request->staff_no,
@@ -44,7 +47,7 @@ class AuthController extends Controller
             'contribution_fee' => $request->contribution_fee,
             'type' => $request->type,
             'email' => $request->email,
-            'password' => Hash::make('password'),
+            'password' => Hash::make($password),
         ]);
 
         return $this->success(new UserResource($user), "User Created Successfully!", 201);

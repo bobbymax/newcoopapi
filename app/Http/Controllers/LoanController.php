@@ -88,6 +88,7 @@ class LoanController extends Controller
             'preferred_tenor' => $request->preferred_tenor,
             'remittance' => $request->remittance,
             'deduction' => $request->deduction,
+            'status' => $request->status ?? "pending"
         ]);
 
         if ($loan) {
@@ -182,7 +183,7 @@ class LoanController extends Controller
 
         $loan->update([
             'status' => $request->status,
-
+            'approved_amount' => $request->status === "approved" ? ($request->approved_amount > 0 ? $request->approved_amount : $request->requested_amount) : 0
         ]);
 
         $message = $request->status === "approved" ? "This loan has now been approved" : "This loan has been denied";

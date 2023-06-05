@@ -18,7 +18,12 @@ class Organization extends Model
         return $this->morphMany(Account::class, 'accountable');
     }
 
-    public function beneficiaries(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function contracts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Award::class);
+    }
+
+    public function payments(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
         return $this->morphMany(Expenditure::class, 'expenditureable');
     }

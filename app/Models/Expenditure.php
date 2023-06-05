@@ -42,4 +42,14 @@ class Expenditure extends Model
     {
         return $this->belongsTo(Batch::class, 'batch_id');
     }
+
+    public function expenditureable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function journal(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Journal::class);
+    }
 }

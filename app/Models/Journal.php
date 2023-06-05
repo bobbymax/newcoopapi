@@ -11,7 +11,7 @@ class Journal extends Model
 
     protected $guarded = [''];
 
-    protected $with = ['expenditure', 'chart', 'credit', 'debit'];
+    protected $with = ['credit', 'debit'];
 
     public function expenditure(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

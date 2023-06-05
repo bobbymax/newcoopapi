@@ -2,64 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LedgerResource;
 use App\Models\Ledger;
+use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LedgerController extends Controller
 {
+    use HttpResponses;
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        return $this->success(LedgerResource::collection(Ledger::latest()->get()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Ledger $ledger)
+    public function show(Ledger $ledger): \Illuminate\Http\JsonResponse
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Ledger $ledger)
-    {
-        //
+        return $this->success(new LedgerResource($ledger));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Ledger $ledger)
+    public function update(Request $request, Ledger $ledger): \Illuminate\Http\JsonResponse
     {
-        //
-    }
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|string|max:255|in:pending,fulfilled',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Ledger $ledger)
-    {
-        //
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Please fix the errors', 500);
+        }
+
+        $ledger->update($request->all());
+
+        return $this->success(new LedgerResource($ledger), 'This Payment has been updated successfully!!');
     }
 }

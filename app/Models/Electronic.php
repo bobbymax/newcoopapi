@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class Electronic extends Model
 {
     use HasFactory;
 
     protected $guarded = [''];
 
-    public function accountable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function requisitor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

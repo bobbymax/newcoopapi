@@ -41,7 +41,7 @@ class ExpenditureController extends Controller
         $validator = Validator::make($request->all(), [
             'sub_budget_head_id' => 'required|integer',
             'trxRef' => 'required|string|max:8|unique:expenditures',
-            'beneficiary' => 'required|string|max:255',
+            'beneficiary' => 'required',
             'description' => 'required',
             'amount' => 'required',
             'type' => 'required|string|max:255|in:inflow,outflow',
@@ -58,7 +58,7 @@ class ExpenditureController extends Controller
         $expenditure->user_id = Auth::user()->id;
         $expenditure->sub_budget_head_id = $request->sub_budget_head_id;
         $expenditure->trxRef = $request->trxRef;
-        $expenditure->beneficiary = $request->beneficiary;
+        $expenditure->beneficiary = $request->beneficiary['label'];
         $expenditure->description = $request->description;
         $expenditure->amount = $request->amount;
         $expenditure->type = $request->type;
@@ -66,8 +66,8 @@ class ExpenditureController extends Controller
         $expenditure->method = $request->means;
         $expenditure->payment_type = $request->payment_type;
         $expenditure->loan_id = $request->loan_id;
-        $expenditure->member_id = $request->member_id;
-        $expenditure->save();
+        $holder = $this->getHolder($request->payment_type, $request->beneficiary['value']);
+        $holder->payments()->save($expenditure);
 
         if ($expenditure && $expenditure->fund() !== null)
         {
@@ -86,11 +86,33 @@ class ExpenditureController extends Controller
         return $this->success(new ExpenditureResource($expenditure), 'Expenditure created successfully!!', 201);
     }
 
+    private function getHolder($type, $id)
+    {
+        return match ($type) {
+            "third-party" => Organization::find($id),
+            default => User::find($id)
+        };
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(Expenditure $expenditure): \Illuminate\Http\JsonResponse
     {
+        return $this->success(new ExpenditureResource($expenditure));
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function fetchByCode($expenditure): \Illuminate\Http\JsonResponse
+    {
+        $expenditure = Expenditure::where('trxRef', $expenditure)->first();
+
+        if (!$expenditure) {
+            return $this->error(null, 'Expenditure does not exist', 422);
+        }
+
         return $this->success(new ExpenditureResource($expenditure));
     }
 

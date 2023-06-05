@@ -42,4 +42,9 @@ class SubBudgetHead extends Model
     {
         return $this->hasOne(Feature::class);
     }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }
