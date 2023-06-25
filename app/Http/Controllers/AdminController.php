@@ -57,7 +57,7 @@ class AdminController extends Controller
                 $expenditure = new Expenditure;
                 $expenditure->user_id = Auth::user()->id;
                 $expenditure->sub_budget_head_id = $subBudgetHead->id;
-                $expenditure->trxRef = "EXP" . $member->membership_no . time();
+                $expenditure->trxRef = $this->generateBarcodeNumber(5);
                 $expenditure->beneficiary = $member->firstname . " " . $member->surname;
                 $expenditure->amount = $obj['amount'];
                 $expenditure->type = "outflow";
@@ -75,7 +75,7 @@ class AdminController extends Controller
 
                     $journal = Journal::create([
                         'expenditure_id' => $expenditure->id,
-                        'chart_of_account' => $chart->id,
+                        'chart_of_account_id' => $chart->id,
                         'credit_account_id' => $member->account->id,
                         'debit_account_id' => $debit->id,
                     ]);
@@ -106,7 +106,7 @@ class AdminController extends Controller
                     $transaction->post_date = Carbon::parse($expenditure->updated_at);
 
                     if ($member->transactions()->save($transaction)) {
-                        $member->wallet->savings = $obj['amount'];
+                        $member->wallet->savings += $obj['amount'];
                         $member->wallet->save();
                     }
                 }
@@ -118,8 +118,21 @@ class AdminController extends Controller
         return $this->success(UserResource::collection($this->data), 'Credited members successfully');
     }
 
-    public function makeDeductions(Request $request)
+    private function generateBarcodeNumber($length = 5): string
     {
+        $number = mt_rand(1000000000, 9999999999); // better than rand()
+        $code = "EXP" . substr($number, 0, 5);
 
+        // call the same function if the barcode exists already
+        if ($this->barcodeNumberExists($code)) {
+            return $this->generateBarcodeNumber($length);
+        }
+
+        // otherwise, it's valid and can be used
+        return $code;
+    }
+
+    private function barcodeNumberExists($code) {
+        return Expenditure::where('trxRef', $code)->first();
     }
 }

@@ -89,7 +89,7 @@ class MemberController extends Controller
     public function passwordReset(Request $request, User $member): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
         ]);
 
         if ($validator->fails()) {

@@ -90,6 +90,11 @@ class User extends Authenticatable
         return $this->hasOne(Contribution::class)->where('status', 'active');
     }
 
+    public function contributionReviews(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ReviewContribution::class);
+    }
+
     public function expenditures(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Expenditure::class);

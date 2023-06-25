@@ -17,6 +17,11 @@ class Module extends Model
         return $this->hasMany(Module::class, 'parentId');
     }
 
+    public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Module::class, 'parentId');
+    }
+
     public function roles(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {
         return $this->morphToMany(Role::class, 'roleable');

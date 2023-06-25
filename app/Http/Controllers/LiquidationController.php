@@ -25,6 +25,11 @@ class LiquidationController extends Controller
         return $this->success(LiquidationResource::collection(Liquidation::where('user_id', Auth::user()->id)->latest()->get()));
     }
 
+    public function getLiquidations(): \Illuminate\Http\JsonResponse
+    {
+        return $this->success(LiquidationResource::collection(Liquidation::latest()->get()));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -60,17 +65,14 @@ class LiquidationController extends Controller
     public function update(Request $request, Liquidation $liquidation): \Illuminate\Http\JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|integer',
-            'loan_id' => 'required|integer',
-            'amount' => 'required',
-            'type' => 'required|string|max:255|in:partial,complete'
+            'status' => 'required|string|max:255|in:approved,denied'
         ]);
 
         if ($validator->fails()) {
             return $this->error($validator->errors(), 'Please fix the following errors', 500);
         }
 
-        $liquidation->update($request->except('code'));
+        $liquidation->update($request->all());
         return $this->success(new LiquidationResource($liquidation), 'Liquidation request updated successfully!');
     }
 

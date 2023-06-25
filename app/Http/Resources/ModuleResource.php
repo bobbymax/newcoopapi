@@ -19,6 +19,7 @@ class ModuleResource extends JsonResource
             'name' => $this->name,
             'label' => $this->label,
             'parentId' => $this->parentId,
+            'parent' => $this->parentId > 0 ? $this->parent->label : 'none',
             'type' => $this->type,
             'url' => $this->url,
             'icon' => $this->icon,

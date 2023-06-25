@@ -10,7 +10,7 @@ class Setting extends Model
     use HasFactory;
 
     protected $guarded = [''];
-    protected $with = ['roles'];
+//    protected $with = ['roles'];
 
     public function roles(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {

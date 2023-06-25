@@ -10,6 +10,7 @@ class Installment extends Model
     use HasFactory;
 
     protected $guarded = [''];
+    protected $dates = ['due_date', 'payment_date'];
 
     public function loan(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

@@ -58,7 +58,8 @@ class AuthController extends Controller
         // Validate login credentials
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
-            'password' => 'required|string'
+            'password' => 'required|string',
+            'device' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -72,7 +73,7 @@ class AuthController extends Controller
             return $this->error(null, 'Invalid login details', 422);
         }
 
-        $token = Auth::user()->createToken('authToken')->accessToken;
+        $token = Auth::user()->createToken($request->device)->accessToken;
 
         return $this->success(['user' => new UserResource(Auth::user()), 'token' => $token], 'Login Successful');
     }
