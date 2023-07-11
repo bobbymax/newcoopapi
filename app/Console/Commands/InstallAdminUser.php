@@ -29,7 +29,7 @@ class InstallAdminUser extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Adding Admin Role!!');
         $role = $this->addAdminRole();
@@ -84,7 +84,7 @@ class InstallAdminUser extends Command
         ]);
     }
 
-    protected function saveModules($role)
+    protected function saveModules($role): void
     {
 
         foreach ($this->modules() as $obj)

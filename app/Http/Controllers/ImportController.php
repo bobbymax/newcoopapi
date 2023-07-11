@@ -11,6 +11,7 @@ use App\Models\Expenditure;
 use App\Models\Fund;
 use App\Models\Journal;
 use App\Models\Ledger;
+use App\Models\Module;
 use App\Models\Role;
 use App\Models\SubBudgetHead;
 use App\Models\Transaction;
@@ -53,9 +54,44 @@ class ImportController extends Controller
             'categories' => $this->loadCategories($request->data),
             'members' => $this->loadMembers($request->data),
             'contributions' => $this->loadContributions($request->data),
+            'modules' => $this->loadModules($request->data)
         };
 
         return $this->success($this->result, 'Data imported successfully!');
+    }
+
+    protected function loadModules(array $data)
+    {
+        $role = Role::where('label', 'super-administrator')->first();
+        foreach($data as $obj) {
+            $module = Module::where('code', $obj['CODE'])->first();
+            $parent = $obj['PARENT'] !== 'none' ? $this->getModule($obj['PARENT']) : null;
+
+            if (! $module) {
+                $module = Module::create([
+                    'name' => $obj['NAME'],
+                    'label' => Str::slug($obj['NAME']),
+                    'icon' => $obj['ICON'],
+                    'url' => $obj['URL'],
+                    'code' => $obj['CODE'],
+                    'type' => $obj['TYPE'],
+                    'parentId' => $parent !== null ? $parent->id : 0
+                ]);
+            }
+
+            if (! in_array($role->id, $module?->roles->pluck('id')->toArray())) {
+                $module?->roles()->save($role);
+            }
+
+
+            $this->data[] = $module;
+        }
+
+        return $this->data;
+    }
+
+    private function getModule($code) {
+        return Module::where('label', $code)->first();
     }
 
     protected function loadBudgetHeads(array $data): array
@@ -163,7 +199,7 @@ class ImportController extends Controller
                     'middlename' => $value['MIDDLENAME'] ?? "",
                     'surname' => $value['SURNAME'],
                     'contribution_fee' => $value['CONTRIBUTION'],
-                    'email' => $email,
+                    'email' => $value['EMAIL'],
                     'mobile' => Str::random(11),
                     'password' => Hash::make('Password1')
                 ]);
