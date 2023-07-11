@@ -190,7 +190,7 @@ class ImportController extends Controller
         {
             $member = User::where('membership_no', $value['MEMID'])->first();
 
-            $email = $value['EMAIL'] ?? Str::slug($value['FIRSTNAME']) . "." . Str::slug($value['SURNAME']) . "@ncdmb.gov.ng";
+//            $email = $value['EMAIL'] ?? Str::slug($value['FIRSTNAME']) . "." . Str::slug($value['SURNAME']) . "@ncdmb.gov.ng";
 
             if (!$member) {
                 $member = User::create([
@@ -206,25 +206,22 @@ class ImportController extends Controller
                     'verified' => true
                 ]);
 
-                if ($member && $role) {
-
-                    Wallet::create([
-                        'user_id' => $member->id,
-                        'savings' => $value['SAVINGS'],
-                    ]);
-
-                    Contribution::create([
-                        'user_id' => $member->id,
-                        'fee' => $member->contribution_fee,
-                        'month' => 'June',
-                        'current' => true
-                    ]);
-
-                    $member->roles()->save($role);
-                }
-
                 $this->data[] = $member;
             }
+
+            Wallet::create([
+                'user_id' => $member->id,
+                'savings' => $value['SAVINGS'],
+            ]);
+
+            Contribution::create([
+                'user_id' => $member->id,
+                'fee' => $member->contribution_fee,
+                'month' => 'June',
+                'current' => true
+            ]);
+
+            $member->roles()->save($role);
         }
 
         return $this->data;
