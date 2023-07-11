@@ -201,7 +201,9 @@ class ImportController extends Controller
                     'contribution_fee' => $value['CONTRIBUTION'],
                     'email' => $value['EMAIL'],
                     'mobile' => Str::random(11),
-                    'password' => Hash::make('Password1')
+                    'password' => Hash::make('Password1'),
+                    'status' => 'active',
+                    'verified' => true
                 ]);
 
                 if ($member && $role) {
@@ -214,7 +216,7 @@ class ImportController extends Controller
                     Contribution::create([
                         'user_id' => $member->id,
                         'fee' => $member->contribution_fee,
-                        'month' => $value['MONTH'],
+                        'month' => 'June',
                         'current' => true
                     ]);
 
