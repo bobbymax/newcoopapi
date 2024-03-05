@@ -17,7 +17,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api')->except('login');
+        $this->middleware('auth:sanctum')->except('login');
     }
 
     public function register(Request $request): \Illuminate\Http\JsonResponse
@@ -72,27 +72,15 @@ class AuthController extends Controller
         if (! Auth::attempt($credentials)) {
             return $this->error(null, 'Invalid login details', 422);
         }
+        Auth::user()->tokens()->delete();
+        $token = Auth::user()->createToken('Auth token for ' . $request->device);
 
-        $token = Auth::user()->createToken($request->device)->accessToken;
-
-        return $this->success(['user' => new UserResource(Auth::user()), 'token' => $token], 'Login Successful');
+        return $this->success(['user' => new UserResource(Auth::user()), 'token' => $token->plainTextToken], 'Login Successful');
     }
 
     public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
-        Auth::user()->tokens->each(function ($token, $key) {
-            $this->revokeAccessAndRefreshTokens($token->id);
-        });
-
+        Auth::user()->tokens()->delete();
         return $this->success(null, 'You have been successfully logged out!');
-    }
-
-    protected function revokeAccessAndRefreshTokens($tokenId)
-    {
-        $tokenRepository = app('Laravel\Passport\TokenRepository');
-        $refreshTokenRepository = app('Laravel\Passport\RefreshTokenRepository');
-
-        $tokenRepository->revokeAccessToken($tokenId);
-        $refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
     }
 }

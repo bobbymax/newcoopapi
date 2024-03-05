@@ -25,7 +25,7 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:sanctum');
     }
 
     public function creditMembers(Request $request): \Illuminate\Http\JsonResponse

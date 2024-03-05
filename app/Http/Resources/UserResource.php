@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'contribution_fee' => $this->contribution_fee,
             'mobile' => $this->mobile,
             'type' => $this->type,
-            'staff_no' => $this->staff_no,
+            'staff_no' => $this->staff_no ?? "",
             'verified' => $this->verified == 1 ? "Verified" : "Not Verified",
             'disabled' => $this->disabled == 1,
             'attributes' => [

@@ -34,7 +34,7 @@ class ImportController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:sanctum');
     }
 
     public function handle(Request $request): \Illuminate\Http\JsonResponse
